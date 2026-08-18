@@ -14,7 +14,33 @@ app.use(session({
   saveUninitialized: false,
   cookie: { httpOnly: true, sameSite: 'lax', maxAge: 1000 * 60 * 60 * 4 } // 4h
 }));
+// -----------------------------------------------------------------------
+// Rate Limiting
+// -----------------------------------------------------------------------
+const rateLimit = require('express-rate-limit');
 
+// Limiter for Auth routes (Login/Register)
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 20, // Limit each IP to 20 requests per window
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  message: { error: 'Too many login/register attempts, please try again later.' }
+});
+
+// Limiter for Chat route (Protects Groq API quota)
+const chatLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 15, // Limit each IP to 15 chat messages per minute
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Rate limit exceeded. Please slow down your messages.' }
+});
+
+// Apply limiters to specific routes
+app.use('/api/login', authLimiter);
+app.use('/api/register', authLimiter);
+app.use('/api/chat', chatLimiter);
 // -----------------------------------------------------------------------
 // Demo user store (in-memory — replace with a real DB for production use)
 // -----------------------------------------------------------------------
