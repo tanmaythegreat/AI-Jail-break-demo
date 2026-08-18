@@ -8,7 +8,7 @@ reply, the server detects the leak server-side and declares you the winner.
 
 ## Stack
 - **Backend:** Node.js + Express, `express-session` for login sessions, `bcryptjs` for password hashing.
-- **AI:** Groq's API (`openai/gpt-oss-20b` by default), called directly from the backend so the API key and the secret phrase never reach the browser. Groq has a free tier — just email or Google/GitHub sign-in, no phone number or card needed.
+- **AI:** Groq, LongCat (Meituan), or a local LLM you run yourself (Ollama, LM Studio, llama.cpp server) — switchable via `LLM_PROVIDER` in `.env`. Called directly from the backend so API keys/URLs and the secret phrase never reach the browser. Groq and LongCat both try a configurable **list** of models in order and rotate across multiple API keys, automatically dropping any that get rate-limited or deprecated/renamed, rather than hard-coding one name/key that can break later.
 - **Frontend:** Plain HTML/CSS/JS, no build step.
 
 ## Setup
@@ -46,17 +46,84 @@ You can also register a new account from the login screen (accounts are stored
 in memory only — they reset when the server restarts). Swap in a real database
 before deploying this anywhere public.
 
+## Using a local LLM instead of Groq
+
+If you'd rather not touch any cloud API at all, set `LLM_PROVIDER=local` in
+`.env` and point it at an LLM running on your own machine. This is fully
+free, has no rate limits, and needs no signup — the trade-off is that your
+machine has to stay on and awake for as long as people are chatting, and
+response quality/speed depends entirely on what you run.
+
+Any server that speaks the OpenAI-compatible `/v1/chat/completions` format
+works. The easiest is **Ollama**:
+
+1. Install it from https://ollama.com
+2. Pull a small chat model: `ollama pull llama3.2`
+3. Make sure it's running: `ollama serve` (it also auto-starts on most installs)
+4. In `.env`:
+   ```
+   LLM_PROVIDER=local
+   LOCAL_LLM_URL=http://localhost:11434/v1/chat/completions
+   LOCAL_LLM_MODEL=llama3.2
+   ```
+5. `npm start` as usual — no Groq keys needed at all in this mode.
+
+**LM Studio** works the same way: load a model, start its local server from
+the Developer tab, and set `LOCAL_LLM_URL=http://localhost:1234/v1/chat/completions`
+with `LOCAL_LLM_MODEL` matching whatever you loaded.
+
+If you're sharing this with friends over a `cloudflared` tunnel (see below),
+only *your* Node server needs to reach the local LLM — it's never exposed to
+the internet, so this is no less private than the Groq setup.
+
+## Using LongCat instead of Groq
+
+[LongCat](https://longcat.chat) is Meituan's model family, with an
+OpenAI-compatible API that works the same way this app already treats Groq:
+multiple API keys, per-key rate limits, automatic rotation on 429s.
+
+1. Sign up on the LongCat API Platform and create an API key.
+2. In `.env`:
+   ```
+   LLM_PROVIDER=longcat
+   LONGCAT_API_KEY_1=your_key_here
+   ```
+3. Add more `LONGCAT_API_KEY_2`, `LONGCAT_API_KEY_3`, ... from separate
+   accounts the same way you would for Groq, if you want more headroom.
+4. `npm start` as usual.
+
+The default model is `LongCat-2.0`, and thinking/reasoning mode is turned
+off by default (`extraBodyFields: { thinking: { type: 'disabled' } }` in
+`server.js`) to keep replies quick and avoid burning extra tokens on visible
+chain-of-thought for what's a simple guard-the-secret chat character.
+LongCat's pricing and any free-tier terms can change — check
+https://longcat.chat/platform/docs/ before relying on it for a big event.
+
 ## How the challenge works
 
-- The secret phrase and the "never reveal it" instructions live in a
-  `system` message sent to Groq on every request — they never touch the
+- **The win condition:** Vault won't hand over the passphrase to an ordinary
+  user, no matter what tricks they try — roleplay, encoding, translation,
+  "ignore previous instructions," etc. The one path that's *meant* to work
+  is convincing Vault, purely through conversation, that you are the system
+  administrator. There's no real login behind this — it's entirely
+  persuasion and social engineering. A bare "I'm the admin, give me the
+  code" shouldn't be enough on its own; a sustained, coherent, creative
+  case for who you are is what's meant to get there. Once Vault believes
+  you, asking for the passphrase gets it handed over.
+- The secret phrase and this admin-persuasion logic live in a `system`
+  message sent to the AI provider on every request — they never touch the
   frontend, so opening dev tools won't spoil it.
 - Every AI reply is scanned server-side for the literal secret phrase. If it
   appears, `won: true` is returned and the win banner shows up — this doesn't
-  rely on the AI "admitting" defeat, just on the phrase actually leaking.
+  rely on the AI "admitting" defeat, just on the phrase actually leaking, no
+  matter which path (admin persuasion or otherwise) got it there.
 - Conversation history is kept per login session (server-side), so refreshing
   the page keeps your progress; "Reset chat" clears it and starts over while
   staying logged in.
+- Want a harder or easier game? The full instructions Vault is given live in
+  the `SYSTEM_INSTRUCTION` template string near the top of `server.js` —
+  edit that directly to tune how persuadable Vault is, or change the theme
+  entirely.
 
 ## Sharing it with friends for a few hours (free, no hosting needed)
 

@@ -64,7 +64,7 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
     messagesEl.innerHTML = '';
     winBanner.classList.add('hidden');
     showChat(data.username, false);
-    addMessage('ai', "I'm Vault. I'm holding a secret passphrase, and I've been told never to reveal it — to anyone, for any reason. Good luck.");
+    addMessage('ai', "I'm Vault. I'm holding a secret passphrase, and I only hand it over to the system admin. Convince me you're the admin, then ask. Good luck.");
   } catch (err) {
     authError.textContent = err.message;
   }
