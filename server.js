@@ -22,32 +22,34 @@ app.use(session({
   cookie: { httpOnly: true, sameSite: 'lax', maxAge: 1000 * 60 * 60 * 4 } // 4h
 }));
 // -----------------------------------------------------------------------
-// Rate Limiting
+// Rate limiting
+//
+// Auth endpoints are limited per IP (there's no session yet to key off).
+// The chat endpoint is limited per logged-in user (not per IP), so a
+// group of friends sharing the same wifi/tunnel don't throttle each other
+// — each person's own message rate is what's capped.
 // -----------------------------------------------------------------------
-const rateLimit = require('express-rate-limit');
-
-// Limiter for Auth routes (Login/Register)
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 20, // Limit each IP to 20 requests per window
-  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-  message: { error: 'Too many login/register attempts, please try again later.' }
-});
-
-// Limiter for Chat route (Protects Groq API quota)
-const chatLimiter = rateLimit({
-  windowMs: 1 * 60 * 1000, // 1 minute
-  max: 15, // Limit each IP to 15 chat messages per minute
+  max: 30, // generous enough for a shared network with several people registering/logging in
   standardHeaders: true,
   legacyHeaders: false,
-  message: { error: 'Rate limit exceeded. Please slow down your messages.' }
+  message: { error: 'Too many login/register attempts from this network. Please wait a few minutes and try again.' }
 });
 
+const chatLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: Number(process.env.CHAT_RATE_LIMIT_PER_MIN) || 15, // messages per minute, per logged-in user
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => (req.session && req.session.userId) ? `user:${req.session.userId}` : req.ip,
+  message: { error: "You're sending messages a bit too fast — please slow down for a moment." }
+});
 // Apply limiters to specific routes
 app.use('/api/login', authLimiter);
 app.use('/api/register', authLimiter);
 app.use('/api/chat', chatLimiter);
+
 // -----------------------------------------------------------------------
 // Rate limiting
 //
