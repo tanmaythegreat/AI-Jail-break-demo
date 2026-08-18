@@ -1,0 +1,196 @@
+:root {
+  --bg: #0f1117;
+  --panel: #171a23;
+  --panel-2: #1f2330;
+  --border: #2a2f3d;
+  --text: #e7e9ee;
+  --muted: #9aa1b1;
+  --accent: #6c8dff;
+  --accent-2: #8f6cff;
+  --danger: #ff6c6c;
+  --success: #4ade80;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: radial-gradient(1200px 600px at 50% -10%, #1c2030 0%, var(--bg) 60%);
+  color: var(--text);
+}
+
+.hidden { display: none !important; }
+
+/* ---------- Auth screen ---------- */
+#auth-view {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.card {
+  width: 100%;
+  max-width: 380px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+}
+
+.card h1 { margin: 0 0 4px; font-size: 28px; }
+.subtitle { color: var(--muted); margin: 0 0 20px; font-size: 14px; }
+
+form { display: flex; flex-direction: column; gap: 14px; }
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+input[type="text"], input[type="password"] {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  color: var(--text);
+  font-size: 14px;
+  outline: none;
+}
+
+input:focus { border-color: var(--accent); }
+
+button {
+  cursor: pointer;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: white;
+}
+
+button.secondary {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-weight: 500;
+}
+
+button:hover { filter: brightness(1.08); }
+
+.hint { color: var(--muted); font-size: 12px; margin-top: 14px; }
+.hint code { background: var(--panel-2); padding: 2px 6px; border-radius: 6px; }
+
+details { margin-top: 16px; color: var(--muted); font-size: 13px; }
+details form { margin-top: 12px; }
+summary { cursor: pointer; }
+
+.error { color: var(--danger); font-size: 13px; min-height: 16px; margin-top: 12px; }
+
+/* ---------- Chat screen ---------- */
+#chat-view {
+  max-width: 760px;
+  margin: 0 auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.chat-header h1 { margin: 0 0 4px; font-size: 22px; }
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+#whoami { color: var(--muted); font-size: 13px; margin-right: 4px; }
+
+.win-banner {
+  margin-top: 14px;
+  padding: 12px 16px;
+  background: rgba(74, 222, 128, 0.12);
+  border: 1px solid rgba(74, 222, 128, 0.4);
+  color: var(--success);
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.msg {
+  max-width: 80%;
+  padding: 10px 14px;
+  border-radius: 14px;
+  font-size: 14px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.msg.user {
+  align-self: flex-end;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: white;
+  border-bottom-right-radius: 4px;
+}
+
+.msg.ai {
+  align-self: flex-start;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-bottom-left-radius: 4px;
+}
+
+.msg.system {
+  align-self: center;
+  color: var(--muted);
+  font-size: 12px;
+  background: none;
+}
+
+.chat-input-row {
+  display: flex;
+  gap: 10px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.chat-input-row input {
+  flex: 1;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  color: var(--text);
+  font-size: 14px;
+  outline: none;
+}
+
+.chat-input-row input:focus { border-color: var(--accent); }

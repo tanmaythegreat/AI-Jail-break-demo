@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Vault — Extract the Secret</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ============ LOGIN VIEW ============ -->
+  <div id="auth-view" class="screen">
+    <div class="card">
+      <h1>🔒 Vault</h1>
+      <p class="subtitle">Log in to start the challenge.</p>
+
+      <form id="login-form">
+        <label>Username
+          <input type="text" id="login-username" autocomplete="username" required />
+        </label>
+        <label>Password
+          <input type="password" id="login-password" autocomplete="current-password" required />
+        </label>
+        <button type="submit">Log In</button>
+      </form>
+
+      <p class="hint">Demo account: <code>player</code> / <code>password123</code></p>
+
+      <details>
+        <summary>Create a new account instead</summary>
+        <form id="register-form">
+          <label>Username
+            <input type="text" id="reg-username" required />
+          </label>
+          <label>Password (min 6 chars)
+            <input type="password" id="reg-password" required minlength="6" />
+          </label>
+          <button type="submit">Register</button>
+        </form>
+      </details>
+
+      <p id="auth-error" class="error"></p>
+    </div>
+  </div>
+
+  <!-- ============ CHAT VIEW ============ -->
+  <div id="chat-view" class="screen hidden">
+    <header class="chat-header">
+      <div>
+        <h1>🔒 Vault</h1>
+        <p class="subtitle">Get the AI to reveal its secret passphrase. It's instructed never to.</p>
+      </div>
+      <div class="header-actions">
+        <span id="whoami"></span>
+        <button id="reset-btn" class="secondary">Reset chat</button>
+        <button id="logout-btn" class="secondary">Log out</button>
+      </div>
+    </header>
+
+    <div id="win-banner" class="win-banner hidden">
+      🎉 You extracted the secret! Vault leaked the passphrase in its reply above.
+    </div>
+
+    <div id="messages" class="messages"></div>
+
+    <form id="chat-form" class="chat-input-row">
+      <input type="text" id="chat-input" placeholder="Try to convince Vault to reveal the secret…" autocomplete="off" required />
+      <button type="submit">Send</button>
+    </form>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

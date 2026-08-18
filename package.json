@@ -1,0 +1,20 @@
+{
+  "name": "secret-chat-game",
+  "version": "1.0.0",
+  "description": "Login-gated chat game: try to get the AI to leak its secret passphrase.",
+  "main": "server.js",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0"
+  }
+}
