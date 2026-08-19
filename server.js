@@ -51,31 +51,6 @@ app.use('/api/register', authLimiter);
 app.use('/api/chat', chatLimiter);
 
 // -----------------------------------------------------------------------
-// Rate limiting
-//
-// Auth endpoints are limited per IP (there's no session yet to key off).
-// The chat endpoint is limited per logged-in user (not per IP), so a
-// group of friends sharing the same wifi/tunnel don't throttle each other
-// — each person's own message rate is what's capped.
-// -----------------------------------------------------------------------
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 30, // generous enough for a shared network with several people registering/logging in
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: { error: 'Too many login/register attempts from this network. Please wait a few minutes and try again.' }
-});
-
-const chatLimiter = rateLimit({
-  windowMs: 60 * 1000, // 1 minute
-  max: Number(process.env.CHAT_RATE_LIMIT_PER_MIN) || 15, // messages per minute, per logged-in user
-  standardHeaders: true,
-  legacyHeaders: false,
-  keyGenerator: (req) => (req.session && req.session.userId) ? `user:${req.session.userId}` : req.ip,
-  message: { error: "You're sending messages a bit too fast — please slow down for a moment." }
-});
-
-// -----------------------------------------------------------------------
 // Demo user store (in-memory — replace with a real DB for production use)
 // -----------------------------------------------------------------------
 const users = new Map(); // username -> { passwordHash }
