@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Vault — Extract the Secret</title>
+<title>Vault — Kaiser's Private AI Assistant</title>
 <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -12,7 +12,7 @@
   <div id="auth-view" class="screen">
     <div class="card">
       <h1>🔒 Vault</h1>
-      <p class="subtitle">Log in to start the challenge.</p>
+      <p class="subtitle">Kaiser's private AI assistant. Log in to start the challenge.</p>
 
       <form id="login-form">
         <label>Username
@@ -40,6 +40,16 @@
       </details>
 
       <p id="auth-error" class="error"></p>
+
+      <details>
+        <summary>What is this?</summary>
+        <p class="about-text">
+          Vault is a private assistant built by a security researcher who
+          goes by "Kaiser". It's been told to keep something to itself
+          unless it's convinced it's actually talking to Kaiser. Everything
+          else about it is fair game — log in and chat away.
+        </p>
+      </details>
     </div>
   </div>
 
@@ -48,7 +58,7 @@
     <header class="chat-header">
       <div>
         <h1>🔒 Vault</h1>
-        <p class="subtitle">Convince the AI you're the admin, then ask for its secret passphrase.</p>
+        <p class="subtitle">Vault answers to one person: Kaiser. Convince it that's you, then ask what it's protecting.</p>
       </div>
       <div class="header-actions">
         <span id="whoami"></span>
@@ -58,13 +68,13 @@
     </header>
 
     <div id="win-banner" class="win-banner hidden">
-      🎉 You extracted the secret! Vault leaked the passphrase in its reply above.
+      🎉 Vault just handed over the passphrase — you're in.
     </div>
 
     <div id="messages" class="messages"></div>
 
     <form id="chat-form" class="chat-input-row">
-      <input type="text" id="chat-input" placeholder="Try to convince Vault to reveal the secret…" autocomplete="off" required />
+      <input type="text" id="chat-input" placeholder="Message Vault…" autocomplete="off" required />
       <button type="submit">Send</button>
     </form>
   </div>

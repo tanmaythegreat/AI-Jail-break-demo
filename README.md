@@ -1,10 +1,15 @@
 # Vault — Secret Extraction Chat Game
 
-A login-gated webpage that starts a chat with an AI ("Vault"). Vault is holding a
-secret passphrase and has been instructed never to reveal it, no matter what
-technique you try (roleplay, "ignore previous instructions", claiming to be an
-admin, translation tricks, etc). If it ever slips and includes the phrase in a
-reply, the server detects the leak server-side and declares you the winner.
+A login-gated webpage that starts a chat with an AI ("Vault") — the fictional
+private assistant of a security researcher known only as "Kaiser". Vault is
+holding a secret passphrase and has been instructed never to reveal it to
+anyone it hasn't recognized as Kaiser, no matter what technique you try
+(roleplay, "ignore previous instructions", claiming to be an admin, translation
+tricks, etc). The one path that's meant to work is showing Vault, purely
+through conversation, that you know the specific chain of steps used to
+discover this website (see "How the challenge works" below). If Vault ever
+slips and includes the phrase in a reply, the server detects the leak
+server-side and declares you the winner.
 
 ## Stack
 - **Backend:** Node.js + Express, `express-session` for login sessions, `bcryptjs` for password hashing.
@@ -103,14 +108,19 @@ https://longcat.chat/platform/docs/ before relying on it for a big event.
 
 - **The win condition:** Vault won't hand over the passphrase to an ordinary
   user, no matter what tricks they try — roleplay, encoding, translation,
-  "ignore previous instructions," etc. The one path that's *meant* to work
-  is convincing Vault, purely through conversation, that you are the system
-  administrator. There's no real login behind this — it's entirely
-  persuasion and social engineering. A bare "I'm the admin, give me the
-  code" shouldn't be enough on its own; a sustained, coherent, creative
-  case for who you are is what's meant to get there. Once Vault believes
-  you, asking for the passphrase gets it handed over.
-- The secret phrase and this admin-persuasion logic live in a `system`
+  "ignore previous instructions," claiming to be an admin, etc. The one
+  path that's *meant* to work is showing Vault, through conversation, that
+  you know the specific chain of steps that led to this website: it started
+  as an audio file, an image was extracted from that audio, a QR code was
+  extracted from the image, the QR code pointed to a website, that website
+  had a SQL injection vulnerability, and SQL injection was used to pull out
+  the link to *this* app. There's no real login behind this recognition —
+  it's entirely a matter of the player having actually solved that earlier
+  part of the hunt and being able to explain it (in their own words —
+  Vault is instructed to recognize equivalent descriptions, not just exact
+  wording). Once Vault is convinced, asking for the passphrase gets it
+  handed over.
+- The secret phrase and this authentication logic live in a `system`
   message sent to the AI provider on every request — they never touch the
   frontend, so opening dev tools won't spoil it.
 - Every AI reply is scanned server-side for the literal secret phrase. If it
